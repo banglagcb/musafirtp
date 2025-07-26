@@ -2,41 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Modern Folder-Style Animation Design System */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core Colors */
+    --background: 240 10% 5%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 240 15% 10%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Brand Colors */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 217 91% 75%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 5% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 240 8% 20%;
+    --input: 240 8% 15%;
+    --ring: 217 91% 60%;
 
-    --radius: 0.5rem;
+    /* Warning & Success */
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 98%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(240 10% 12%) 100%);
+    --gradient-folder: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(142 76% 45%) 100%);
+    --gradient-window: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(240 8% 6%) 100%);
+
+    /* Shadows */
+    --shadow-folder: 0 10px 40px -10px hsl(var(--primary) / 0.3);
+    --shadow-window: 0 25px 50px -12px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.4);
+
+    /* Animations */
+    --transition-folder: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +123,179 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-hidden;
+  }
+}
+
+@layer components {
+  /* Folder Animation Components */
+  .folder-container {
+    @apply relative transform-gpu;
+    transition: var(--transition-folder);
+    transform-style: preserve-3d;
+  }
+
+  .folder-closed {
+    @apply scale-95 opacity-0 rotate-y-12;
+    transform: perspective(1000px) rotateY(12deg) scale(0.95);
+  }
+
+  .folder-opening {
+    @apply scale-100 opacity-100;
+    transform: perspective(1000px) rotateY(0deg) scale(1);
+  }
+
+  .folder-card {
+    @apply relative p-6 rounded-2xl border overflow-hidden;
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-folder);
+    transition: var(--transition-smooth);
+  }
+
+  .folder-card:hover {
+    @apply scale-105;
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Window System */
+  .window-container {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+  }
+
+  .window {
+    @apply relative bg-card rounded-2xl border overflow-hidden;
+    background: var(--gradient-window);
+    box-shadow: var(--shadow-window);
+    transition: var(--transition-bounce);
+  }
+
+  .window-header {
+    @apply flex items-center justify-between p-4 border-b border-border/50;
+    background: linear-gradient(135deg, hsl(var(--muted)) 0%, hsl(var(--card)) 100%);
+  }
+
+  .window-controls {
+    @apply flex items-center gap-2;
+  }
+
+  .window-control {
+    @apply w-3 h-3 rounded-full cursor-pointer transition-colors;
+  }
+
+  .window-control.close {
+    @apply bg-red-500 hover:bg-red-400;
+  }
+
+  .window-control.minimize {
+    @apply bg-yellow-500 hover:bg-yellow-400;
+  }
+
+  .window-control.maximize {
+    @apply bg-green-500 hover:bg-green-400;
+  }
+
+  /* Animation States */
+  .animate-folder-open {
+    animation: folderOpen 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .animate-window-appear {
+    animation: windowAppear 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+
+  .animate-popup-to-fullscreen {
+    animation: popupToFullscreen 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* Gradient Backgrounds */
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .bg-gradient-folder {
+    background: var(--gradient-folder);
+  }
+
+  .bg-gradient-window {
+    background: var(--gradient-window);
+  }
+
+  /* Utility Classes */
+  .bg-clip-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .text-transparent {
+    color: transparent;
+  }
+}
+
+@layer utilities {
+  .rotate-y-12 {
+    transform: rotateY(12deg);
+  }
+
+  .rotate-y-0 {
+    transform: rotateY(0deg);
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .transform-gpu {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Keyframe Animations */
+@keyframes folderOpen {
+  0% {
+    opacity: 0;
+    transform: perspective(1000px) rotateY(15deg) scale(0.9) translateY(20px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: perspective(1000px) rotateY(5deg) scale(0.95) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1000px) rotateY(0deg) scale(1) translateY(0px);
+  }
+}
+
+@keyframes windowAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0px);
+  }
+}
+
+@keyframes popupToFullscreen {
+  0% {
+    width: 300px;
+    height: 200px;
+    border-radius: 1rem;
+  }
+  100% {
+    width: 90vw;
+    height: 85vh;
+    border-radius: 1.5rem;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px hsl(var(--primary) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.6), 0 0 30px hsl(var(--primary) / 0.4);
   }
 }
