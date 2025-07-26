@@ -116,7 +116,8 @@ export const Dashboard = ({ username, onLogout }: DashboardProps) => {
           <Button 
             variant="outline" 
             onClick={onLogout}
-            className="gap-1 sm:gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors text-xs sm:text-sm h-8 sm:h-9 md:h-10 px-2 sm:px-3 touch-action-manipulation flex-shrink-0"
+            className="gap-1 sm:gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors text-xs sm:text-sm h-8 sm:h-9 md:h-10 px-2 sm:px-3 flex-shrink-0"
+            style={{ touchAction: 'manipulation' }}
           >
             <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="hidden xs:inline">লগআউট</span>
@@ -129,10 +130,11 @@ export const Dashboard = ({ username, onLogout }: DashboardProps) => {
         {dashboardCards.map((card, index) => (
           <Card 
             key={card.id}
-            className={`folder-card cursor-pointer group hover:scale-105 transition-all duration-300 ${card.gradient} border-border/50 touch-action-manipulation`}
+            className={`folder-card cursor-pointer group hover:scale-105 transition-all duration-300 ${card.gradient} border-border/50`}
             onClick={() => openWindow(card.id)}
             style={{
-              animationDelay: `${index * 150}ms`
+              animationDelay: `${index * 150}ms`,
+              touchAction: 'manipulation'
             }}
           >
             <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-4 md:p-6">

@@ -197,9 +197,10 @@
   }
 
   .window-control {
-    @apply w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center hover:scale-110 touch-action-manipulation;
+    @apply w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center hover:scale-110;
     min-height: 44px;
     min-width: 44px;
+    touch-action: manipulation;
   }
 
   .window-control.close {

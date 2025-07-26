@@ -99,8 +99,9 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-2 sm:px-3 py-2 hover:bg-transparent touch-action-manipulation"
+                  className="absolute right-0 top-0 h-full px-2 sm:px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
+                  style={{ touchAction: 'manipulation' }}
                 >
                   {showPassword ? (
                     <EyeOff className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
@@ -113,8 +114,9 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
             
             <Button 
               type="submit" 
-              className="w-full bg-gradient-primary hover:scale-105 transition-transform font-medium h-10 sm:h-11 text-sm sm:text-base touch-action-manipulation"
+              className="w-full bg-gradient-primary hover:scale-105 transition-transform font-medium h-10 sm:h-11 text-sm sm:text-base"
               disabled={isLoading}
+              style={{ touchAction: 'manipulation' }}
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">

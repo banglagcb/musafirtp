@@ -142,7 +142,8 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
               <button
                 key={windowId}
                 onClick={() => handleRestore(windowId)}
-                className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-card/80 backdrop-blur-sm border rounded-lg hover:bg-card/90 transition-all duration-200 animate-slide-up touch-action-manipulation min-h-[44px]"
+                className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-card/80 backdrop-blur-sm border rounded-lg hover:bg-card/90 transition-all duration-200 animate-slide-up min-h-[44px]"
+                style={{ touchAction: 'manipulation' }}
               >
                 <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded bg-gradient-to-br ${card.color} flex items-center justify-center text-white text-xs flex-shrink-0`}>
                   {card.icon}
@@ -185,23 +186,26 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
             
             <div className="window-controls flex-shrink-0">
               <button 
-                className="window-control minimize touch-action-manipulation"
+                className="window-control minimize"
                 onClick={() => handleMinimize(windowId)}
                 title="Minimize"
+                style={{ touchAction: 'manipulation' }}
               >
                 <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
               <button 
-                className="window-control maximize touch-action-manipulation"
+                className="window-control maximize"
                 onClick={() => updateWindowState(windowId, { maximized: !windowState.maximized })}
                 title={windowState.maximized ? "Restore" : "Maximize"}
+                style={{ touchAction: 'manipulation' }}
               >
                 <Square className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
               <button 
-                className="window-control close touch-action-manipulation"
+                className="window-control close"
                 onClick={() => onCloseWindow(windowId)}
                 title="Close"
+                style={{ touchAction: 'manipulation' }}
               >
                 <X className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
