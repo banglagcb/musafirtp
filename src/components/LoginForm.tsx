@@ -59,10 +59,10 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
             <Sparkles className="w-8 h-8 text-primary-foreground" />
           </div>
           <CardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            স্বাগতম
+            ট্রাভেল এজেন্সি
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            আপনার অ্যাকাউন্টে লগইন করুন
+            ইন্টারনাল ম্যানেজমেন্ট সিস্টেম
           </CardDescription>
         </CardHeader>
         

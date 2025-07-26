@@ -2,14 +2,16 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
-  FileText, 
+  Plane, 
   Users, 
   Settings, 
   BarChart3, 
   FolderOpen, 
-  Bell,
+  CreditCard,
   Home,
-  LogOut
+  LogOut,
+  Plus,
+  FileSpreadsheet
 } from 'lucide-react';
 import { WindowManager } from './WindowManager';
 
@@ -32,50 +34,50 @@ export const Dashboard = ({ username, onLogout }: DashboardProps) => {
 
   const dashboardCards: DashboardCard[] = [
     {
-      id: 'documents',
-      title: 'ডকুমেন্টস',
-      description: 'আপনার সকল ফাইল এবং ডকুমেন্ট',
-      icon: <FileText className="w-8 h-8" />,
+      id: 'new-booking',
+      title: 'নতুন বুকিং',
+      description: 'নতুন ফ্লাইট বুকিং যোগ করুন',
+      icon: <Plus className="w-8 h-8" />,
       color: 'from-blue-500 to-cyan-500',
       gradient: 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20'
     },
     {
-      id: 'users',
-      title: 'ব্যবহারকারী',
-      description: 'ব্যবহারকারী ব্যবস্থাপনা এবং প্রোফাইল',
-      icon: <Users className="w-8 h-8" />,
+      id: 'bookings-list',
+      title: 'বুকিং তালিকা',
+      description: 'সকল বুকিং দেখুন ও এডিট করুন',
+      icon: <Plane className="w-8 h-8" />,
       color: 'from-purple-500 to-pink-500',
       gradient: 'bg-gradient-to-br from-purple-500/20 to-pink-500/20'
     },
     {
-      id: 'analytics',
-      title: 'বিশ্লেষণ',
-      description: 'ডেটা এবং পরিসংখ্যান দেখুন',
-      icon: <BarChart3 className="w-8 h-8" />,
+      id: 'customers',
+      title: 'গ্রাহক তালিকা',
+      description: 'গ্রাহকদের তথ্য ও ইতিহাস',
+      icon: <Users className="w-8 h-8" />,
       color: 'from-green-500 to-emerald-500',
       gradient: 'bg-gradient-to-br from-green-500/20 to-emerald-500/20'
     },
     {
-      id: 'projects',
-      title: 'প্রকল্প',
-      description: 'আপনার সকল প্রকল্প এবং কাজ',
-      icon: <FolderOpen className="w-8 h-8" />,
+      id: 'payments',
+      title: 'পেমেন্ট স্ট্যাটাস',
+      description: 'পেমেন্ট ট্র্যাকিং ও হিসাব',
+      icon: <CreditCard className="w-8 h-8" />,
       color: 'from-orange-500 to-red-500',
       gradient: 'bg-gradient-to-br from-orange-500/20 to-red-500/20'
     },
     {
-      id: 'notifications',
-      title: 'বিজ্ঞপ্তি',
-      description: 'গুরুত্বপূর্ণ বার্তা এবং আপডেট',
-      icon: <Bell className="w-8 h-8" />,
+      id: 'reports',
+      title: 'রিপোর্ট',
+      description: 'দৈনিক/মাসিক বিক্রয় ও মুনাফা',
+      icon: <BarChart3 className="w-8 h-8" />,
       color: 'from-yellow-500 to-amber-500',
       gradient: 'bg-gradient-to-br from-yellow-500/20 to-amber-500/20'
     },
     {
-      id: 'settings',
-      title: 'সেটিংস',
-      description: 'অ্যাপ্লিকেশন কনফিগারেশন',
-      icon: <Settings className="w-8 h-8" />,
+      id: 'export',
+      title: 'ডেটা এক্সপোর্ট',
+      description: 'CSV বা Excel ফর্ম্যাটে ডাউনলোড',
+      icon: <FileSpreadsheet className="w-8 h-8" />,
       color: 'from-gray-500 to-slate-500',
       gradient: 'bg-gradient-to-br from-gray-500/20 to-slate-500/20'
     }
@@ -105,7 +107,7 @@ export const Dashboard = ({ username, onLogout }: DashboardProps) => {
             </div>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                ড্যাশবোর্ড
+                ট্রাভেল এজেন্সি ড্যাশবোর্ড
               </h1>
               <p className="text-muted-foreground">স্বাগতম, {username}!</p>
             </div>

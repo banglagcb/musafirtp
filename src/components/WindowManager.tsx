@@ -4,6 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { X, Minus, Square, ArrowLeft, FileText, Users, BarChart3, FolderOpen, Bell, Settings } from 'lucide-react';
+import { NewBookingForm } from './travel/NewBookingForm';
+import { BookingsList } from './travel/BookingsList';
+import { ReportsSection } from './travel/ReportsSection';
 
 interface DashboardCard {
   id: string;
@@ -54,174 +57,64 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
     const card = dashboardCards.find(c => c.id === windowId);
     if (!card) return null;
 
-    const baseContent = {
-      documents: {
-        main: {
-          title: 'ডকুমেন্ট ম্যানেজার',
+    switch (windowId) {
+      case 'new-booking':
+        return {
+          title: 'নতুন বুকিং',
+          content: <NewBookingForm onClose={() => onCloseWindow(windowId)} />
+        };
+      case 'bookings-list':
+        return {
+          title: 'বুকিং তালিকা', 
+          content: <BookingsList />
+        };
+      case 'reports':
+        return {
+          title: 'রিপোর্ট ও বিশ্লেষণ',
+          content: <ReportsSection />
+        };
+      case 'customers':
+        return {
+          title: 'গ্রাহক তালিকা',
           content: (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <Card className="p-4 hover:bg-muted/50 cursor-pointer transition-colors">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-6 h-6 text-blue-500" />
-                    <div>
-                      <h4 className="font-medium">প্রতিবেদন ২০২৪</h4>
-                      <p className="text-sm text-muted-foreground">PDF • 2.3 MB</p>
-                    </div>
-                  </div>
-                </Card>
-                <Card className="p-4 hover:bg-muted/50 cursor-pointer transition-colors">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-6 h-6 text-green-500" />
-                    <div>
-                      <h4 className="font-medium">বাজেট পরিকল্পনা</h4>
-                      <p className="text-sm text-muted-foreground">Excel • 1.1 MB</p>
-                    </div>
-                  </div>
-                </Card>
+              <div className="text-center py-8 text-muted-foreground">
+                <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>গ্রাহক ম্যানেজমেন্ট মডিউল শীঘ্রই আসছে</p>
               </div>
-              <Separator />
+            </div>
+          )
+        };
+      case 'payments':
+        return {
+          title: 'পেমেন্ট স্ট্যাটাস',
+          content: (
+            <div className="space-y-4">
+              <div className="text-center py-8 text-muted-foreground">
+                <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>পেমেন্ট ট্র্যাকিং মডিউল শীঘ্রই আসছে</p>
+              </div>
+            </div>
+          )
+        };
+      case 'export':
+        return {
+          title: 'ডেটা এক্সপোর্ট',
+          content: (
+            <div className="space-y-4">
               <div className="text-center py-8 text-muted-foreground">
                 <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>আরও ডকুমেন্ট লোড করতে ক্লিক করুন</p>
+                <p>ডেটা এক্সপোর্ট মডিউল শীঘ্রই আসছে</p>
               </div>
             </div>
           )
-        }
-      },
-      users: {
-        main: {
-          title: 'ব্যবহারকারী তালিকা',
-          content: (
-            <div className="space-y-4">
-              {['আহমেদ আলী', 'ফাতেমা খান', 'মোহাম্মদ হাসান'].map((name, index) => (
-                <Card key={index} className="p-4 hover:bg-muted/50 cursor-pointer transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center text-white font-medium">
-                        {name.charAt(0)}
-                      </div>
-                      <div>
-                        <h4 className="font-medium">{name}</h4>
-                        <p className="text-sm text-muted-foreground">সক্রিয় ব্যবহারকারী</p>
-                      </div>
-                    </div>
-                    <Badge variant="secondary">অনলাইন</Badge>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )
-        }
-      },
-      analytics: {
-        main: {
-          title: 'বিশ্লেষণ ড্যাশবোর্ড',
-          content: (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <Card className="p-4 text-center">
-                  <h3 className="text-2xl font-bold text-primary">১,২৩৪</h3>
-                  <p className="text-sm text-muted-foreground">মোট ব্যবহারকারী</p>
-                </Card>
-                <Card className="p-4 text-center">
-                  <h3 className="text-2xl font-bold text-accent">৫৬৭</h3>
-                  <p className="text-sm text-muted-foreground">সক্রিয় সেশন</p>
-                </Card>
-              </div>
-              <Card className="p-6">
-                <div className="h-32 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg flex items-center justify-center">
-                  <BarChart3 className="w-12 h-12 text-muted-foreground" />
-                </div>
-                <p className="text-center mt-4 text-muted-foreground">চার্ট ডেটা লোড হচ্ছে...</p>
-              </Card>
-            </div>
-          )
-        }
-      },
-      projects: {
-        main: {
-          title: 'প্রকল্প তালিকা',
-          content: (
-            <div className="space-y-4">
-              {['ওয়েবসাইট ডিজাইন', 'মোবাইল অ্যাপ', 'ডেটাবেস আপগ্রেড'].map((project, index) => (
-                <Card key={index} className="p-4 hover:bg-muted/50 cursor-pointer transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <FolderOpen className="w-6 h-6 text-orange-500" />
-                      <div>
-                        <h4 className="font-medium">{project}</h4>
-                        <p className="text-sm text-muted-foreground">চলমান প্রকল্প</p>
-                      </div>
-                    </div>
-                    <Badge variant="outline">৭৫%</Badge>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )
-        }
-      },
-      notifications: {
-        main: {
-          title: 'বিজ্ঞপ্তি কেন্দ্র',
-          content: (
-            <div className="space-y-4">
-              {[
-                { title: 'নতুন বার্তা', time: '৫ মিনিট আগে', type: 'info' },
-                { title: 'সিস্টেম আপডেট', time: '১ ঘন্টা আগে', type: 'warning' },
-                { title: 'ব্যাকআপ সম্পন্ন', time: '২ ঘন্টা আগে', type: 'success' }
-              ].map((notification, index) => (
-                <Card key={index} className="p-4 hover:bg-muted/50 cursor-pointer transition-colors">
-                  <div className="flex items-start gap-3">
-                    <Bell className="w-5 h-5 mt-1 text-primary" />
-                    <div className="flex-1">
-                      <h4 className="font-medium">{notification.title}</h4>
-                      <p className="text-sm text-muted-foreground">{notification.time}</p>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )
-        }
-      },
-      settings: {
-        main: {
-          title: 'সেটিংস',
-          content: (
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <h3 className="font-medium">সাধারণ</h3>
-                <Card className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">থিম সেটিংস</h4>
-                      <p className="text-sm text-muted-foreground">অ্যাপিয়ারেন্স কাস্টমাইজ করুন</p>
-                    </div>
-                    <Settings className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                </Card>
-                <Card className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">ভাষা সেটিংস</h4>
-                      <p className="text-sm text-muted-foreground">বাংলা (ডিফল্ট)</p>
-                    </div>
-                    <Settings className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                </Card>
-              </div>
-            </div>
-          )
-        }
-      }
-    };
-
-    return baseContent[windowId as keyof typeof baseContent]?.[currentPage as 'main'] || {
-      title: card.title,
-      content: <div className="text-center py-8 text-muted-foreground">কন্টেন্ট লোড হচ্ছে...</div>
-    };
+        };
+      default:
+        return {
+          title: card.title,
+          content: <div className="text-center py-8 text-muted-foreground">কন্টেন্ট লোড হচ্ছে...</div>
+        };
+    }
   };
 
   if (openWindows.length === 0) return null;
