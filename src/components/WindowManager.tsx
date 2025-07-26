@@ -1,9 +1,5 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { X, Minus, Square, ArrowLeft, FileText, Users, BarChart3, FolderOpen, Bell, Settings } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Minus, Square } from 'lucide-react';
 import { NewBookingForm } from './travel/NewBookingForm';
 import { BookingsList } from './travel/BookingsList';
 import { ReportsSection } from './travel/ReportsSection';
@@ -27,12 +23,63 @@ interface WindowState {
   id: string;
   minimized: boolean;
   maximized: boolean;
-  currentPage: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  zIndex: number;
 }
 
 export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: WindowManagerProps) => {
   const [windowStates, setWindowStates] = useState<WindowState[]>([]);
-  const [minimizedWindows, setMinimizedWindows] = useState<string[]>([]);
+  const [dragState, setDragState] = useState<{
+    isDragging: boolean;
+    windowId: string | null;
+    startX: number;
+    startY: number;
+    initialX: number;
+    initialY: number;
+  }>({
+    isDragging: false,
+    windowId: null,
+    startX: 0,
+    startY: 0,
+    initialX: 0,
+    initialY: 0,
+  });
+  const [highestZIndex, setHighestZIndex] = useState(1000);
+
+  const getDefaultWindowPosition = (index: number) => {
+    const baseX = 100 + (index * 30);
+    const baseY = 100 + (index * 30);
+    return {
+      x: Math.min(baseX, window.innerWidth - 800),
+      y: Math.min(baseY, window.innerHeight - 600),
+      width: 800,
+      height: 600,
+    };
+  };
+
+  const getWindowState = (windowId: string): WindowState => {
+    const existing = windowStates.find(w => w.id === windowId);
+    if (existing) return existing;
+    
+    const index = openWindows.indexOf(windowId);
+    const defaultPos = getDefaultWindowPosition(index);
+    const newState: WindowState = {
+      id: windowId,
+      minimized: false,
+      maximized: false,
+      x: defaultPos.x,
+      y: defaultPos.y,
+      width: defaultPos.width,
+      height: defaultPos.height,
+      zIndex: highestZIndex + index,
+    };
+    
+    setWindowStates(prev => [...prev, newState]);
+    return newState;
+  };
 
   const updateWindowState = (windowId: string, updates: Partial<WindowState>) => {
     setWindowStates(prev => {
@@ -40,31 +87,119 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
       if (existing) {
         return prev.map(w => w.id === windowId ? { ...w, ...updates } : w);
       } else {
-        return [...prev, { id: windowId, minimized: false, maximized: false, currentPage: 'main', ...updates }];
+        const index = openWindows.indexOf(windowId);
+        const defaultPos = getDefaultWindowPosition(index);
+        const newState: WindowState = {
+          id: windowId,
+          minimized: false,
+          maximized: false,
+          x: defaultPos.x,
+          y: defaultPos.y,
+          width: defaultPos.width,
+          height: defaultPos.height,
+          zIndex: highestZIndex,
+          ...updates,
+        };
+        return [...prev, newState];
       }
     });
   };
 
+  const bringToFront = (windowId: string) => {
+    const newZIndex = highestZIndex + 1;
+    setHighestZIndex(newZIndex);
+    updateWindowState(windowId, { zIndex: newZIndex });
+  };
+
   const handleMinimize = (windowId: string) => {
-    setMinimizedWindows(prev => [...prev, windowId]);
     updateWindowState(windowId, { minimized: true });
   };
 
-  const handleRestore = (windowId: string) => {
-    setMinimizedWindows(prev => prev.filter(id => id !== windowId));
-    updateWindowState(windowId, { minimized: false });
+  const handleMaximize = (windowId: string) => {
+    const windowState = getWindowState(windowId);
+    if (windowState.maximized) {
+      updateWindowState(windowId, { 
+        maximized: false,
+        x: windowState.x || 100,
+        y: windowState.y || 100,
+        width: 800,
+        height: 600,
+      });
+    } else {
+      updateWindowState(windowId, { 
+        maximized: true,
+        x: 0,
+        y: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
   };
 
-  const getWindowState = (windowId: string): WindowState => {
-    return windowStates.find(w => w.id === windowId) || { 
-      id: windowId, 
-      minimized: false, 
-      maximized: false, 
-      currentPage: 'main' 
+  const handleMouseDown = (e: React.MouseEvent, windowId: string) => {
+    if ((e.target as HTMLElement).closest('.window-control')) return;
+    
+    bringToFront(windowId);
+    
+    const windowState = getWindowState(windowId);
+    if (windowState.maximized) return;
+
+    setDragState({
+      isDragging: true,
+      windowId,
+      startX: e.clientX,
+      startY: e.clientY,
+      initialX: windowState.x,
+      initialY: windowState.y,
+    });
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragState.isDragging || !dragState.windowId) return;
+
+    const deltaX = e.clientX - dragState.startX;
+    const deltaY = e.clientY - dragState.startY;
+
+    updateWindowState(dragState.windowId, {
+      x: Math.max(0, Math.min(dragState.initialX + deltaX, window.innerWidth - 300)),
+      y: Math.max(0, Math.min(dragState.initialY + deltaY, window.innerHeight - 100)),
+    });
+  };
+
+  const handleMouseUp = () => {
+    setDragState({
+      isDragging: false,
+      windowId: null,
+      startX: 0,
+      startY: 0,
+      initialX: 0,
+      initialY: 0,
+    });
+  };
+
+  // Add global mouse event listeners
+  useEffect(() => {
+    if (dragState.isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'move';
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
     };
-  };
+  }, [dragState.isDragging]);
 
-  const getWindowContent = (windowId: string, currentPage: string) => {
+  const getWindowContent = (windowId: string) => {
     const card = dashboardCards.find(c => c.id === windowId);
     if (!card) return null;
 
@@ -84,42 +219,6 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
           title: 'রিপোর্ট ও বিশ্লেষণ',
           content: <ReportsSection />
         };
-      case 'customers':
-        return {
-          title: 'গ্রাহক তালিকা',
-          content: (
-            <div className="space-y-4">
-              <div className="text-center py-8 text-muted-foreground">
-                <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>গ্রাহক ম্যানেজমেন্ট মডিউল শীঘ্রই আসছে</p>
-              </div>
-            </div>
-          )
-        };
-      case 'payments':
-        return {
-          title: 'পেমেন্ট স্ট্যাটাস',
-          content: (
-            <div className="space-y-4">
-              <div className="text-center py-8 text-muted-foreground">
-                <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>পেমেন্ট ট্র্যাকিং মডিউল শীঘ্রই আসছে</p>
-              </div>
-            </div>
-          )
-        };
-      case 'export':
-        return {
-          title: 'ডেটা এক্সপোর্ট',
-          content: (
-            <div className="space-y-4">
-              <div className="text-center py-8 text-muted-foreground">
-                <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>ডেটা এক্সপোর্ট মডিউল শীঘ্রই আসছে</p>
-              </div>
-            </div>
-          )
-        };
       default:
         return {
           title: card.title,
@@ -128,27 +227,31 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
     }
   };
 
+  // Taskbar for minimized windows
+  const minimizedWindows = windowStates.filter(w => w.minimized && openWindows.includes(w.id));
+
   if (openWindows.length === 0) return null;
 
   return (
     <>
-      {/* Minimized Windows Taskbar */}
+      {/* Taskbar for minimized windows */}
       {minimizedWindows.length > 0 && (
-        <div className="fixed bottom-2 left-2 sm:bottom-4 sm:left-4 z-50 flex flex-wrap gap-1 sm:gap-2 max-w-[calc(100vw-1rem)]">
-          {minimizedWindows.map((windowId) => {
-            const card = dashboardCards.find(c => c.id === windowId);
+        <div className="fixed bottom-4 left-4 z-[9999] flex gap-2">
+          {minimizedWindows.map((windowState) => {
+            const card = dashboardCards.find(c => c.id === windowState.id);
             if (!card) return null;
+            
             return (
               <button
-                key={windowId}
-                onClick={() => handleRestore(windowId)}
-                className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-card/80 backdrop-blur-sm border rounded-lg hover:bg-card/90 transition-all duration-200 animate-slide-up min-h-[44px]"
-                style={{ touchAction: 'manipulation' }}
+                key={windowState.id}
+                onClick={() => updateWindowState(windowState.id, { minimized: false })}
+                className="flex items-center gap-2 px-3 py-2 bg-card border rounded-lg hover:bg-muted transition-colors"
+                title={card.title}
               >
-                <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded bg-gradient-to-br ${card.color} flex items-center justify-center text-white text-xs flex-shrink-0`}>
+                <div className={`w-5 h-5 rounded ${card.color} flex items-center justify-center text-white text-xs`}>
                   {card.icon}
                 </div>
-                <span className="text-xs sm:text-sm font-medium truncate max-w-[60px] sm:max-w-[100px] hidden xs:block">{card.title}</span>
+                <span className="text-sm font-medium">{card.title}</span>
               </button>
             );
           })}
@@ -159,69 +262,67 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
       {openWindows.map((windowId) => {
         const windowState = getWindowState(windowId);
         const card = dashboardCards.find(c => c.id === windowId);
-        const content = getWindowContent(windowId, windowState.currentPage);
+        const content = getWindowContent(windowId);
         
         if (!card || windowState.minimized) return null;
 
         return (
-      <div key={windowId} className="window-container animate-float-up">
-        <div 
-          className={`window transform-gpu ${
-            windowState.maximized 
-              ? 'window-maximized' 
-              : 'window-normal'
-          }`}
-          style={{
-            width: windowState.maximized ? '95vw' : 'min(90vw, 900px)',
-            height: windowState.maximized ? '90vh' : 'min(80vh, 700px)',
-            maxWidth: windowState.maximized ? '95vw' : '900px',
-            maxHeight: windowState.maximized ? '90vh' : '700px'
-          }}
-        >
-          {/* Window Header */}
-          <div className="window-header flex-shrink-0">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-              <div className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center text-white text-xs sm:text-sm flex-shrink-0`}>
-                {card.icon}
+          <div
+            key={windowId}
+            className="fixed bg-card border rounded-lg shadow-2xl flex flex-col overflow-hidden"
+            style={{
+              left: windowState.maximized ? 0 : windowState.x,
+              top: windowState.maximized ? 0 : windowState.y,
+              width: windowState.maximized ? '100vw' : windowState.width,
+              height: windowState.maximized ? '100vh' : windowState.height,
+              zIndex: windowState.zIndex,
+              borderRadius: windowState.maximized ? 0 : '0.5rem',
+            }}
+            onClick={() => bringToFront(windowId)}
+          >
+            {/* Window Header */}
+            <div
+              className="flex items-center justify-between p-3 bg-muted cursor-move select-none"
+              onMouseDown={(e) => handleMouseDown(e, windowId)}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-6 h-6 rounded ${card.color} flex items-center justify-center text-white text-sm`}>
+                  {card.icon}
+                </div>
+                <div>
+                  <h3 className="font-medium text-sm">{content?.title}</h3>
+                  <p className="text-xs text-muted-foreground">{card.description}</p>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="font-medium text-sm sm:text-base md:text-lg truncate">{content?.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground truncate hidden sm:block">{card.description}</p>
+              
+              <div className="window-controls flex gap-1">
+                <button 
+                  className="window-control minimize"
+                  onClick={() => handleMinimize(windowId)}
+                  title="Minimize"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <button 
+                  className="window-control maximize"
+                  onClick={() => handleMaximize(windowId)}
+                  title={windowState.maximized ? "Restore" : "Maximize"}
+                >
+                  <Square className="w-4 h-4" />
+                </button>
+                <button 
+                  className="window-control close"
+                  onClick={() => onCloseWindow(windowId)}
+                  title="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
             </div>
-            
-            <div className="window-controls flex-shrink-0">
-              <button 
-                className="window-control minimize"
-                onClick={() => handleMinimize(windowId)}
-                title="Minimize"
-                style={{ touchAction: 'manipulation' }}
-              >
-                <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
-              </button>
-              <button 
-                className="window-control maximize"
-                onClick={() => updateWindowState(windowId, { maximized: !windowState.maximized })}
-                title={windowState.maximized ? "Restore" : "Maximize"}
-                style={{ touchAction: 'manipulation' }}
-              >
-                <Square className="w-3 h-3 sm:w-4 sm:h-4" />
-              </button>
-              <button 
-                className="window-control close"
-                onClick={() => onCloseWindow(windowId)}
-                title="Close"
-                style={{ touchAction: 'manipulation' }}
-              >
-                <X className="w-3 h-3 sm:w-4 sm:h-4" />
-              </button>
-            </div>
-          </div>
 
-          {/* Window Content */}
-          <div className="window-content p-2 xs:p-3 sm:p-4 md:p-6 overflow-auto flex-1">
-            {content?.content}
-          </div>
+            {/* Window Content */}
+            <div className="flex-1 overflow-auto p-4">
+              {content?.content}
             </div>
           </div>
         );
