@@ -94,58 +94,58 @@ export const Dashboard = ({ username, onLogout }: DashboardProps) => {
   };
 
   return (
-    <div className="min-h-screen p-6 relative overflow-hidden">
+    <div className="min-h-screen p-2 xs:p-3 sm:p-4 md:p-6 relative overflow-hidden">
       {/* Background Animation */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5"></div>
       
       {/* Header */}
-      <div className="relative z-10 mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-              <Home className="w-6 h-6 text-primary-foreground" />
+      <div className="relative z-10 mb-4 sm:mb-6 md:mb-8">
+        <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <div className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 bg-gradient-primary rounded-xl flex items-center justify-center flex-shrink-0">
+              <Home className="w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6 text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg xs:text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight">
                 ট্রাভেল এজেন্সি ড্যাশবোর্ড
               </h1>
-              <p className="text-muted-foreground">স্বাগতম, {username}!</p>
+              <p className="text-xs sm:text-sm md:text-base text-muted-foreground truncate">স্বাগতম, {username}!</p>
             </div>
           </div>
           
           <Button 
             variant="outline" 
             onClick={onLogout}
-            className="gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
+            className="gap-1 sm:gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors text-xs sm:text-sm h-8 sm:h-9 md:h-10 px-2 sm:px-3 touch-action-manipulation flex-shrink-0"
           >
-            <LogOut className="w-4 h-4" />
-            লগআউট
+            <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline">লগআউট</span>
           </Button>
         </div>
       </div>
 
       {/* Dashboard Cards Grid */}
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="relative z-10 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-5 md:gap-6">
         {dashboardCards.map((card, index) => (
           <Card 
             key={card.id}
-            className={`folder-card cursor-pointer group hover:scale-105 transition-all duration-300 ${card.gradient} border-border/50`}
+            className={`folder-card cursor-pointer group hover:scale-105 transition-all duration-300 ${card.gradient} border-border/50 touch-action-manipulation`}
             onClick={() => openWindow(card.id)}
             style={{
               animationDelay: `${index * 150}ms`
             }}
           >
-            <CardHeader className="pb-3">
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${card.color} flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform`}>
+            <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-4 md:p-6">
+              <div className={`w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${card.color} flex items-center justify-center text-white mb-2 sm:mb-4 group-hover:scale-110 transition-transform text-lg xs:text-xl sm:text-2xl`}>
                 {card.icon}
               </div>
-              <CardTitle className="text-xl font-semibold">{card.title}</CardTitle>
-              <CardDescription className="text-sm">{card.description}</CardDescription>
+              <CardTitle className="text-base xs:text-lg sm:text-xl font-semibold leading-tight">{card.title}</CardTitle>
+              <CardDescription className="text-xs sm:text-sm leading-relaxed">{card.description}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <FolderOpen className="w-4 h-4 mr-2" />
-                ক্লিক করে খুলুন
+            <CardContent className="p-3 sm:p-4 md:p-6 pt-0">
+              <div className="flex items-center text-xs sm:text-sm text-muted-foreground">
+                <FolderOpen className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                <span className="truncate">ক্লিক করে খুলুন</span>
               </div>
             </CardContent>
           </Card>

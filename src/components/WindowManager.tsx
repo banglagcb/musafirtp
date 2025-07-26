@@ -134,7 +134,7 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
     <>
       {/* Minimized Windows Taskbar */}
       {minimizedWindows.length > 0 && (
-        <div className="fixed bottom-4 left-4 z-50 flex gap-2">
+        <div className="fixed bottom-2 left-2 sm:bottom-4 sm:left-4 z-50 flex flex-wrap gap-1 sm:gap-2 max-w-[calc(100vw-1rem)]">
           {minimizedWindows.map((windowId) => {
             const card = dashboardCards.find(c => c.id === windowId);
             if (!card) return null;
@@ -142,12 +142,12 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
               <button
                 key={windowId}
                 onClick={() => handleRestore(windowId)}
-                className="flex items-center gap-2 px-3 py-2 bg-card/80 backdrop-blur-sm border rounded-lg hover:bg-card/90 transition-all duration-200 animate-slide-up"
+                className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-card/80 backdrop-blur-sm border rounded-lg hover:bg-card/90 transition-all duration-200 animate-slide-up touch-action-manipulation min-h-[44px]"
               >
-                <div className={`w-5 h-5 rounded bg-gradient-to-br ${card.color} flex items-center justify-center text-white text-xs`}>
+                <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded bg-gradient-to-br ${card.color} flex items-center justify-center text-white text-xs flex-shrink-0`}>
                   {card.icon}
                 </div>
-                <span className="text-sm font-medium truncate max-w-[100px]">{card.title}</span>
+                <span className="text-xs sm:text-sm font-medium truncate max-w-[60px] sm:max-w-[100px] hidden xs:block">{card.title}</span>
               </button>
             );
           })}
@@ -163,55 +163,55 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
         if (!card || windowState.minimized) return null;
 
         return (
-          <div key={windowId} className="window-container animate-float-up">
-            <div 
-              className={`window transform-gpu ${
-                windowState.maximized 
-                  ? 'window-maximized w-[95vw] h-[95vh] sm:w-[98vw] sm:h-[98vh]' 
-                  : 'window-normal w-[95vw] h-[90vh] sm:w-[85vw] sm:h-[85vh] md:w-[800px] md:h-[600px] lg:w-[900px] lg:h-[700px]'
-              }`}
-            >
-              {/* Window Header */}
-              <div className="window-header flex-shrink-0">
-                <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
-                  <div className={`w-6 h-6 md:w-8 md:h-8 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center text-white text-xs md:text-sm flex-shrink-0`}>
-                    {card.icon}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-medium text-sm md:text-base truncate">{content?.title}</h3>
-                    <p className="text-xs text-muted-foreground truncate hidden sm:block">{card.description}</p>
-                  </div>
-                </div>
-                
-                <div className="window-controls flex-shrink-0">
-                  <button 
-                    className="window-control minimize"
-                    onClick={() => handleMinimize(windowId)}
-                    title="Minimize"
-                  >
-                    <Minus className="w-2 h-2" />
-                  </button>
-                  <button 
-                    className="window-control maximize"
-                    onClick={() => updateWindowState(windowId, { maximized: !windowState.maximized })}
-                    title={windowState.maximized ? "Restore" : "Maximize"}
-                  >
-                    <Square className="w-2 h-2" />
-                  </button>
-                  <button 
-                    className="window-control close"
-                    onClick={() => onCloseWindow(windowId)}
-                    title="Close"
-                  >
-                    <X className="w-2 h-2" />
-                  </button>
-                </div>
+      <div key={windowId} className="window-container animate-float-up">
+        <div 
+          className={`window transform-gpu ${
+            windowState.maximized 
+              ? 'window-maximized w-[98vw] h-[96vh] sm:w-[98vw] sm:h-[96vh]' 
+              : 'window-normal w-[96vw] h-[88vh] xs:w-[92vw] xs:h-[85vh] sm:w-[88vw] sm:h-[82vh] md:w-[750px] md:h-[580px] lg:w-[850px] lg:h-[650px] xl:w-[950px] xl:h-[700px] 2xl:w-[1000px] 2xl:h-[750px]'
+          }`}
+        >
+          {/* Window Header */}
+          <div className="window-header flex-shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+              <div className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center text-white text-xs sm:text-sm flex-shrink-0`}>
+                {card.icon}
               </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-medium text-sm sm:text-base md:text-lg truncate">{content?.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate hidden sm:block">{card.description}</p>
+              </div>
+            </div>
+            
+            <div className="window-controls flex-shrink-0">
+              <button 
+                className="window-control minimize touch-action-manipulation"
+                onClick={() => handleMinimize(windowId)}
+                title="Minimize"
+              >
+                <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
+              <button 
+                className="window-control maximize touch-action-manipulation"
+                onClick={() => updateWindowState(windowId, { maximized: !windowState.maximized })}
+                title={windowState.maximized ? "Restore" : "Maximize"}
+              >
+                <Square className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
+              <button 
+                className="window-control close touch-action-manipulation"
+                onClick={() => onCloseWindow(windowId)}
+                title="Close"
+              >
+                <X className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
+            </div>
+          </div>
 
-              {/* Window Content */}
-              <div className="window-content p-3 md:p-6 overflow-auto flex-1">
-                {content?.content}
-              </div>
+          {/* Window Content */}
+          <div className="window-content p-2 xs:p-3 sm:p-4 md:p-6 overflow-auto flex-1">
+            {content?.content}
+          </div>
             </div>
           </div>
         );
