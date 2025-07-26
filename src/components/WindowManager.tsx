@@ -168,9 +168,15 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
         <div 
           className={`window transform-gpu ${
             windowState.maximized 
-              ? 'window-maximized w-[98vw] h-[96vh] sm:w-[98vw] sm:h-[96vh]' 
-              : 'window-normal w-[96vw] h-[88vh] xs:w-[92vw] xs:h-[85vh] sm:w-[88vw] sm:h-[82vh] md:w-[750px] md:h-[580px] lg:w-[850px] lg:h-[650px] xl:w-[950px] xl:h-[700px] 2xl:w-[1000px] 2xl:h-[750px]'
+              ? 'window-maximized' 
+              : 'window-normal'
           }`}
+          style={{
+            width: windowState.maximized ? '95vw' : 'min(90vw, 900px)',
+            height: windowState.maximized ? '90vh' : 'min(80vh, 700px)',
+            maxWidth: windowState.maximized ? '95vw' : '900px',
+            maxHeight: windowState.maximized ? '90vh' : '700px'
+          }}
         >
           {/* Window Header */}
           <div className="window-header flex-shrink-0">
