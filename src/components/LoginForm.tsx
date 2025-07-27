@@ -5,9 +5,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Eye, EyeOff, Lock, User, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LoginFormProps {
-  onLogin: (username: string) => void;
+  onLogin: (username: string, role: string) => void;
 }
 
 export const LoginForm = ({ onLogin }: LoginFormProps) => {
@@ -16,6 +17,7 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,16 +33,35 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
 
     setIsLoading(true);
     
-    // Simulate login delay
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const success = await login(username, password);
+      
+      if (success) {
+        toast({
+          title: "সফল!",
+          description: "সফলভাবে লগইন হয়েছে",
+          variant: "default",
+        });
+        
+        // Determine role based on username (in real app, this comes from backend)
+        const role = username === 'admin' ? 'admin' : 'manager';
+        onLogin(username, role);
+      } else {
+        toast({
+          title: "ত্রুটি",
+          description: "ভুল ব্যবহারকারীর নাম বা পাসওয়ার্ড",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
-        title: "সফল!",
-        description: "সফলভাবে লগইন হয়েছে",
-        variant: "default",
+        title: "ত্রুটি",
+        description: "লগইন করতে সমস্যা হয়েছে",
+        variant: "destructive",
       });
-      onLogin(username);
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

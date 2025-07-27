@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { X, Minus, Square } from 'lucide-react';
 import { NewBookingForm } from './travel/NewBookingForm';
+import { EnhancedBookingForm } from './travel/EnhancedBookingForm';
 import { BookingsList } from './travel/BookingsList';
 import { ReportsSection } from './travel/ReportsSection';
+import { TicketPurchaseForm } from './admin/TicketPurchaseForm';
+import { PurchasedTicketsList } from './admin/PurchasedTicketsList';
 
 interface DashboardCard {
   id: string;
@@ -208,6 +211,21 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
         return {
           title: 'নতুন বুকিং',
           content: <NewBookingForm onClose={() => onCloseWindow(windowId)} />
+        };
+      case 'enhanced-booking':
+        return {
+          title: 'উন্নত বুকিং',
+          content: <EnhancedBookingForm onClose={() => onCloseWindow(windowId)} />
+        };
+      case 'ticket-purchase':
+        return {
+          title: 'টিকেট ক্রয়',
+          content: <TicketPurchaseForm onClose={() => onCloseWindow(windowId)} />
+        };
+      case 'purchased-tickets':
+        return {
+          title: 'ক্রয়কৃত টিকেট',
+          content: <PurchasedTicketsList />
         };
       case 'bookings-list':
         return {

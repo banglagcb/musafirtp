@@ -1,26 +1,24 @@
-import { useState } from 'react';
 import { LoginForm } from '@/components/LoginForm';
 import { Dashboard } from '@/components/Dashboard';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
+  const { isLoggedIn, user, logout } = useAuth();
 
-  const handleLogin = (user: string) => {
-    setUsername(user);
-    setIsLoggedIn(true);
+  const handleLogin = (username: string, role: string) => {
+    // Login is handled by AuthContext
+    console.log(`User ${username} logged in as ${role}`);
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUsername('');
+    logout();
   };
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn || !user) {
     return <LoginForm onLogin={handleLogin} />;
   }
 
-  return <Dashboard username={username} onLogout={handleLogout} />;
+  return <Dashboard username={user.name} onLogout={handleLogout} />;
 };
 
 export default Index;
