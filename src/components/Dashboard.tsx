@@ -11,9 +11,13 @@ import {
   Home,
   LogOut,
   Plus,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Package,
+  ShoppingCart,
+  UserPlus
 } from 'lucide-react';
 import { WindowManager } from './WindowManager';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardProps {
   username: string;
@@ -31,31 +35,58 @@ interface DashboardCard {
 
 export const Dashboard = ({ username, onLogout }: DashboardProps) => {
   const [openWindows, setOpenWindows] = useState<string[]>([]);
+  const { isAdmin } = useAuth();
 
   const dashboardCards: DashboardCard[] = [
     {
-      id: 'new-booking',
+      id: 'enhanced-booking',
       title: 'নতুন বুকিং',
       description: 'নতুন ফ্লাইট বুকিং যোগ করুন',
       icon: <Plus className="w-8 h-8" />,
       color: 'from-blue-500 to-cyan-500',
       gradient: 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20'
     },
+    ...(isAdmin() ? [
+      {
+        id: 'ticket-purchase',
+        title: 'টিকেট ক্রয়',
+        description: 'সরবরাহকারী থেকে টিকেট কিনুন',
+        icon: <ShoppingCart className="w-8 h-8" />,
+        color: 'from-indigo-500 to-purple-500',
+        gradient: 'bg-gradient-to-br from-indigo-500/20 to-purple-500/20'
+      },
+      {
+        id: 'purchased-tickets',
+        title: 'ক্রয়কৃত টিকেট',
+        description: 'টিকেট স্টক ও লক ম্যানেজমেন্ট',
+        icon: <Package className="w-8 h-8" />,
+        color: 'from-purple-500 to-pink-500',
+        gradient: 'bg-gradient-to-br from-purple-500/20 to-pink-500/20'
+      },
+      {
+        id: 'user-management',
+        title: 'ব্যবহারকারী ব্যবস্থাপনা',
+        description: 'নতুন ব্যবহারকারী তৈরি ও পরিচালনা',
+        icon: <UserPlus className="w-8 h-8" />,
+        color: 'from-green-500 to-emerald-500',
+        gradient: 'bg-gradient-to-br from-green-500/20 to-emerald-500/20'
+      },
+      {
+        id: 'system-settings',
+        title: 'সিস্টেম সেটিংস',
+        description: 'সিস্টেম কনফিগারেশন ও পছন্দসমূহ',
+        icon: <Settings className="w-8 h-8" />,
+        color: 'from-slate-500 to-gray-500',
+        gradient: 'bg-gradient-to-br from-slate-500/20 to-gray-500/20'
+      }
+    ] : []),
     {
       id: 'bookings-list',
       title: 'বুকিং তালিকা',
       description: 'সকল বুকিং দেখুন ও এডিট করুন',
       icon: <Plane className="w-8 h-8" />,
-      color: 'from-purple-500 to-pink-500',
-      gradient: 'bg-gradient-to-br from-purple-500/20 to-pink-500/20'
-    },
-    {
-      id: 'customers',
-      title: 'গ্রাহক তালিকা',
-      description: 'গ্রাহকদের তথ্য ও ইতিহাস',
-      icon: <Users className="w-8 h-8" />,
-      color: 'from-green-500 to-emerald-500',
-      gradient: 'bg-gradient-to-br from-green-500/20 to-emerald-500/20'
+      color: 'from-teal-500 to-cyan-500',
+      gradient: 'bg-gradient-to-br from-teal-500/20 to-cyan-500/20'
     },
     {
       id: 'payments',
@@ -73,14 +104,16 @@ export const Dashboard = ({ username, onLogout }: DashboardProps) => {
       color: 'from-yellow-500 to-amber-500',
       gradient: 'bg-gradient-to-br from-yellow-500/20 to-amber-500/20'
     },
-    {
-      id: 'export',
-      title: 'ডেটা এক্সপোর্ট',
-      description: 'CSV বা Excel ফর্ম্যাটে ডাউনলোড',
-      icon: <FileSpreadsheet className="w-8 h-8" />,
-      color: 'from-gray-500 to-slate-500',
-      gradient: 'bg-gradient-to-br from-gray-500/20 to-slate-500/20'
-    }
+    ...(isAdmin() ? [
+      {
+        id: 'export',
+        title: 'ডেটা এক্সপোর্ট',
+        description: 'CSV বা Excel ফর্ম্যাটে ডাউনলোড',
+        icon: <FileSpreadsheet className="w-8 h-8" />,
+        color: 'from-gray-500 to-slate-500',
+        gradient: 'bg-gradient-to-br from-gray-500/20 to-slate-500/20'
+      }
+    ] : [])
   ];
 
   const openWindow = (windowId: string) => {

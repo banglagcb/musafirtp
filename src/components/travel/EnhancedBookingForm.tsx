@@ -30,6 +30,8 @@ interface EnhancedBookingFormProps {
 
 export const EnhancedBookingForm = ({ onClose }: EnhancedBookingFormProps) => {
   const [availableTickets, setAvailableTickets] = useState<TicketPurchase[]>([]);
+  const [filteredTickets, setFilteredTickets] = useState<TicketPurchase[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedTicket, setSelectedTicket] = useState<TicketPurchase | null>(null);
   const [bookingData, setBookingData] = useState<EnhancedBookingData>({
     customerName: '',
@@ -51,17 +53,38 @@ export const EnhancedBookingForm = ({ onClose }: EnhancedBookingFormProps) => {
     loadAvailableTickets();
   }, []);
 
+  useEffect(() => {
+    filterTickets();
+  }, [availableTickets, searchTerm]);
+
   const loadAvailableTickets = () => {
     try {
       const savedTickets = localStorage.getItem('purchasedTickets');
       if (savedTickets) {
-        const tickets: TicketPurchase[] = JSON.parse(savedTickets);
-        const available = tickets.filter(ticket => ticket.status === 'available');
+        const tickets = JSON.parse(savedTickets);
+        // Filter out locked and sold tickets, only show available
+        const available = tickets.filter((ticket: TicketPurchase) => 
+          ticket.status === 'available'
+        );
         setAvailableTickets(available);
       }
     } catch (error) {
       console.error('Error loading tickets:', error);
     }
+  };
+
+  const filterTickets = () => {
+    if (!searchTerm) {
+      setFilteredTickets(availableTickets);
+      return;
+    }
+
+    const filtered = availableTickets.filter(ticket =>
+      ticket.pnr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ticket.airline.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ticket.route.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredTickets(filtered);
   };
 
   const handleTicketSelect = (ticketId: string) => {
@@ -200,7 +223,21 @@ export const EnhancedBookingForm = ({ onClose }: EnhancedBookingFormProps) => {
             {/* Available Tickets Selection */}
             <div className="space-y-3">
               <Label>উপলব্ধ টিকেট নির্বাচন করুন *</Label>
-              {availableTickets.length === 0 ? (
+              
+              {/* Search Filter */}
+              <div className="relative">
+                <Input
+                  placeholder="PNR, এয়ারলাইন বা রুট দিয়ে খুঁজুন..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+                <div className="absolute left-3 top-3 text-muted-foreground">
+                  🔍
+                </div>
+              </div>
+
+              {filteredTickets.length === 0 ? (
                 <Alert>
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
@@ -209,7 +246,7 @@ export const EnhancedBookingForm = ({ onClose }: EnhancedBookingFormProps) => {
                 </Alert>
               ) : (
                 <div className="grid gap-3">
-                  {availableTickets.map((ticket) => (
+                  {filteredTickets.map((ticket) => (
                     <div
                       key={ticket.id}
                       className={`p-4 border rounded-lg cursor-pointer transition-all ${

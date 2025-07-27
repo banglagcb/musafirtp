@@ -6,6 +6,8 @@ import { BookingsList } from './travel/BookingsList';
 import { ReportsSection } from './travel/ReportsSection';
 import { TicketPurchaseForm } from './admin/TicketPurchaseForm';
 import { PurchasedTicketsList } from './admin/PurchasedTicketsList';
+import { SystemSettings } from './admin/SystemSettings';
+import { UserManagement } from './admin/UserManagement';
 
 interface DashboardCard {
   id: string;
@@ -226,6 +228,16 @@ export const WindowManager = ({ openWindows, onCloseWindow, dashboardCards }: Wi
         return {
           title: 'ক্রয়কৃত টিকেট',
           content: <PurchasedTicketsList />
+        };
+      case 'user-management':
+        return {
+          title: 'ব্যবহারকারী ব্যবস্থাপনা',
+          content: <UserManagement />
+        };
+      case 'system-settings':
+        return {
+          title: 'সিস্টেম সেটিংস',
+          content: <SystemSettings />
         };
       case 'bookings-list':
         return {
