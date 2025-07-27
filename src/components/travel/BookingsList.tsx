@@ -155,35 +155,35 @@ export const BookingsList = () => {
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <Card className="border border-blue-200 bg-blue-50/50">
+            <Card className="bg-white border border-border shadow-sm">
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-2xl font-bold text-foreground">
                     {filteredBookings.length}
                   </div>
-                  <div className="text-sm text-blue-600">মোট বুকিং</div>
+                  <div className="text-sm text-muted-foreground">মোট বুকিং</div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border border-green-200 bg-green-50/50">
+            <Card className="bg-white border border-border shadow-sm">
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-2xl font-bold text-foreground">
                     {filteredBookings.filter(b => b.paymentStatus === 'paid').length}
                   </div>
-                  <div className="text-sm text-green-600">পেইড বুকিং</div>
+                  <div className="text-sm text-muted-foreground">পেইড বুকিং</div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border border-yellow-200 bg-yellow-50/50">
+            <Card className="bg-white border border-border shadow-sm">
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-600">
+                  <div className="text-2xl font-bold text-foreground">
                     {formatCurrency(filteredBookings.reduce((sum, booking) => sum + booking.profit, 0))}
                   </div>
-                  <div className="text-sm text-yellow-600">মোট মুনাফা</div>
+                  <div className="text-sm text-muted-foreground">মোট মুনাফা</div>
                 </div>
               </CardContent>
             </Card>
